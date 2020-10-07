@@ -1,0 +1,29 @@
+{
+  "name": "myreact",
+  "version": "1.0.0",
+  "description": "jingsong's react",
+  "main": "index.js",
+  "scripts": {
+    "serve": "parcel index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zengzijingsong/MyReact.git"
+  },
+  "author": "jingsong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zengzijingsong/MyReact/issues"
+  },
+  "homepage": "https://github.com/zengzijingsong/MyReact#readme",
+  "dependencies": {
+    "json5": "^2.1.3",
+    "parcel": "^1.12.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0"
+  }
+}
