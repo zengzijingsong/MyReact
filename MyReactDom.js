@@ -1,4 +1,4 @@
-import MrReact from './MyReact'
+import MyReact from './MyReact'
 
 function render(vnode, container) { //每次调用 render 时，先把之前的清空
   container.innerHTML = ''
@@ -39,10 +39,10 @@ function createDomfromVnode(vnode) {
 //创建组件
 function createComponent(constructor, attrs) {
   let component
-  if(constructor.prototype instanceof MrReact.Component) {
+  if(constructor.prototype instanceof MyReact.Component) {
     component = new constructor(attrs) 
   } else {
-    component = new MrReact.Component(attrs) //使组件具有 state， props
+    component = new MyReact.Component(attrs) //使组件具有 state， props
     component.constructor = constructor
     component.render = function() { //增加 render 方法
       return this.constructor(attrs)
