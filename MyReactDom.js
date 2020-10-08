@@ -1,14 +1,30 @@
+import MrReact from './MyReact'
+
 function render(vnode, container) { //每次调用 render 时，先把之前的清空
   container.innerHTML = ''
+  console.log(vnode)
   _render(vnode, container)
 }
 
 function _render(vnode, container) {
+  let dom = createDomfromVnode(vnode)
+  container.appendChild(dom)
+}
+
+
+//window.c = []
+function createDomfromVnode(vnode) {
   if (typeof vnode === 'string' || typeof vnode === 'number') { //如果是 string 或者 nubmer 都去创建文本节点
-    return container.appendChild(document.createTextNode(vnode))
+    return document.createTextNode(vnode)
   }
 
   if (typeof vnode === 'object') {
+    if(typeof vnode.tag === 'function') { //当 vnode.tag 是个函数时，就去创建组件
+      let component = createComponent(vnode.tag, vnode.attrs) //第一个参数是构造函数名，第二个参数是组件的属性
+      renderComponent(component)
+      return component.$root
+    }
+
     let dom = document.createElement(vnode.tag)
     setAttribute(dom, vnode.attrs)
     if (vnode.children && Array.isArray(vnode.children)) {
@@ -16,9 +32,34 @@ function _render(vnode, container) {
         _render(vnodeChild, dom) //记得这里是 _render , 这里的逻辑是不清空的
       })
     }
-
-    container.appendChild(dom)
+    return dom
   }
+}
+
+//创建组件
+function createComponent(constructor, attrs) {
+  let component
+  if(constructor.prototype instanceof MrReact.Component) {
+    component = new constructor(attrs) 
+  } else {
+    component = new MrReact.Component(attrs) //使组件具有 state， props
+    component.constructor = constructor
+    component.render = function() { //增加 render 方法
+      return this.constructor(attrs)
+    }
+  }
+  return component
+}
+
+//渲染组件
+function renderComponent(component) {
+  let vnode = component.render()
+  let dom = createDomfromVnode(vnode)
+
+  if(component.$root && component.$root.parentNode) {
+    component.$root.parentNode.replaceChild(dom, component.$root)
+  }
+  component.$root = dom
 }
 
 function setAttribute(dom, attrs) {
@@ -34,5 +75,6 @@ function setAttribute(dom, attrs) {
 }
 
 export default {
-  render
+  render,
+  renderComponent
 }
