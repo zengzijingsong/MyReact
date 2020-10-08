@@ -1,6 +1,7 @@
-const MyReact={};
+const MyReact={createElement};
+const MyReactDom={render};
 
-MyReact.createElement=function(tag,attrs,...children){
+function createElement(tag,attrs,...children){
     return {
         tag,
         attrs,
@@ -20,17 +21,41 @@ let element = (
   </div>
 )
 
-function render(vnode, container) { 
-  if(typeof vnode === 'string') { //创建文本节点，挂载到容器中
+function render(vnode, container) { //每次调用 render 时，先把之前的清空
+  container.innerHTML = ''
+  _render(vnode, container)
+}
+
+function _render(vnode, container) {
+  if (typeof vnode === 'string' || typeof vnode === 'number') { //如果是 string 或者 nubmer 都去创建文本节点
     return container.appendChild(document.createTextNode(vnode))
   }
 
-  if(typeof vnode === 'object') {
-    let dom = document.createElement(vnode.tag) 
+  if (typeof vnode === 'object') {
+    let dom = document.createElement(vnode.tag)
     setAttribute(dom, vnode.attrs)
-    if(vnode.children && Array.isArray(vnode.children)) {
+    if (vnode.children && Array.isArray(vnode.children)) {
       vnode.children.forEach(vnodeChild => {
-        render(vnodeChild, dom)
+        _render(vnodeChild, dom) //记得这里是 _render , 这里的逻辑是不清空的
+      })
+    }
+
+    container.appendChild(dom)
+  }
+}
+
+
+function _render(vnode, container) {
+  if (typeof vnode === 'string' || typeof vnode === 'number') { //如果是 string 或者 nubmer 都去创建文本节点
+    return container.appendChild(document.createTextNode(vnode))
+  }
+
+  if (typeof vnode === 'object') {
+    let dom = document.createElement(vnode.tag)
+    setAttribute(dom, vnode.attrs)
+    if (vnode.children && Array.isArray(vnode.children)) {
+      vnode.children.forEach(vnodeChild => {
+        _render(vnodeChild, dom) //记得这里是 _render , 这里的逻辑是不清空的
       })
     }
 
@@ -49,4 +74,4 @@ function setAttribute(dom, attrs) {
   }
 }
 
-render(element,document.getElementById('root'))
+MyReactDom.render(element,document.getElementById('root'))
